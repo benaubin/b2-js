@@ -1,0 +1,32 @@
+{
+  "name": "b2-js",
+  "version": "1.0.0",
+  "description": "A powerful library for using Backblaze B2.",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/benaubin/b2-js.git"
+  },
+  "keywords": [
+    "backblaze",
+    "b2",
+    "object",
+    "storage"
+  ],
+  "author": "Ben Aubin (benaubin.com)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/benaubin/b2-js/issues"
+  },
+  "homepage": "https://github.com/benaubin/b2-js#readme",
+  "dependencies": {
+    "node-fetch": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.1",
+    "@types/node-fetch": "^2.5.7"
+  }
+}
