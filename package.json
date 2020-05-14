@@ -4,6 +4,8 @@
   "description": "A powerful library for using Backblaze B2.",
   "main": "dist/index.js",
   "scripts": {
+    "prepublish": "npm run build",
+    "build": "tsc -p .",
     "repl": "node -r ts-node/register --experimental-modules",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
