@@ -1,4 +1,7 @@
 import Bucket from "./bucket";
+import FileUploadStream from "./file-upload-stream";
+import { BackblazeLibraryError } from "./errors";
+import SinglePartUpload from "./single-part-upload";
 
 /**
  * Where sensible, Backblaze recommends these values to allow different B2 clients
@@ -18,7 +21,7 @@ export interface FileInfo {
    * original source file was last modified. It is a base 10 number of milliseconds
    * since midnight, January 1, 1970 UTC. This fits in a 64 bit integer.
    */
-  src_last_modified_millis: string
+  src_last_modified_millis: string;
 
   /**
    * If this is present, B2 will use it as the value of the 'Content-Disposition' header
@@ -86,15 +89,15 @@ export interface FileInfo {
   "b2-content-type"?: string;
 
   /**
-  * ## Custom headers:
-  * 
-  * - Must use the format `X-Bz-Info-*` for the header name.
-  * - Up to 10 of these headers may be present.
-  * - The * part of the header name is replaced with the name of a custom field in the file
-  *   information stored with the file, and the value is an arbitrary UTF-8 string, percent-encoded.
-  * - The same info headers sent with the upload will be returned with the download.
-  * - The header name is case insensitive.
-  */
+   * ## Custom headers:
+   *
+   * - Must use the format `X-Bz-Info-*` for the header name.
+   * - Up to 10 of these headers may be present.
+   * - The * part of the header name is replaced with the name of a custom field in the file
+   *   information stored with the file, and the value is an arbitrary UTF-8 string, percent-encoded.
+   * - The same info headers sent with the upload will be returned with the download.
+   * - The header name is case insensitive.
+   */
   [key: string]: string | undefined;
 }
 
@@ -187,4 +190,67 @@ export interface FileUploadOptions {
 
   maxRetries?: number;
   backoff?: number;
+}
+
+type MinimumFileData = Partial<FileData> & ({fileName: string});
+
+export default class File {
+  private _bucket: Bucket;
+  private _fileData: MinimumFileData;
+
+  constructor(bucket: Bucket, fileData: MinimumFileData) {
+    this._bucket = bucket;
+    this._fileData = fileData;
+  }
+
+  async getFileName() {
+    let {fileName} = this._fileData;
+    if(typeof fileName !== "undefined") return fileName;
+
+    throw new BackblazeLibraryError.Internal("Finding a file's name by id is not supported yet.")
+  }
+
+  async getFileId() {
+    let {fileId} = this._fileData;
+    if(typeof fileId !== "undefined") return fileId;
+
+    throw new BackblazeLibraryError.Internal("Finding a file's id by name is not supported yet.")
+  }
+
+  async getBucketId() {
+    return this._bucket.getBucketId();
+  }
+
+  get b2() {
+    return this._bucket.b2;
+  }
+
+  createWriteStream(): FileUploadStream {
+    return new FileUploadStream(this)
+  }
+  
+  /** @protected */
+  async _startMultipartUpload(options: FileUploadOptions): Promise<void> {
+    if(this._fileData.action === FileAction.upload) return;
+
+    const [bucketId, fileName] = await Promise.all([this.getBucketId(), this.getFileName()])
+
+    const res = await this.b2.callApi("b2_start_large_file", {
+      method: "POST",
+      body: JSON.stringify({
+        bucketId,
+        fileName,
+        contentType: options.contentType || "application/octet-stream",
+        fileInfo: options.fileInfo,
+      }),
+    });
+    
+    this._fileData = await res.json();
+  }
+
+  /** @protected */
+  async uploadSinglePart(data: Buffer | NodeJS.ReadableStream, options: FileUploadOptions & {contentLength: number}) {
+    return this._bucket.uploadSinglePart(await this.getFileName(), data, options)
+  }
+
 }

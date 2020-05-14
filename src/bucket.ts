@@ -1,7 +1,8 @@
 import B2 from "./b2";
-import { FileUploadOptions } from "./file";
+import File, { FileUploadOptions, FileData } from "./file";
 import SinglePartUpload from "./single-part-upload";
 import { BackblazeLibraryError } from "./errors";
+import uploadPart from "./api-operations/upload-part";
 
 export enum BucketType {
   allPublic = "allPublic",
@@ -69,6 +70,10 @@ export default class Bucket {
     this.info = info;
   }
 
+  file(fileName: string): File {
+    return new File(this, {fileName});
+  }
+  
   async getBucketName(): Promise<string> {
     if (typeof this.info.bucketName !== "undefined")
       return this.info.bucketName;
@@ -84,12 +89,12 @@ export default class Bucket {
   async refreshBucketInfo(): Promise<BucketInfo> {
     const query: any = {
       accountId: this.b2["auth"].accountId,
-    }
+    };
 
     if (typeof this.info.bucketId !== "undefined") {
-      query.bucketId = this.info.bucketId
+      query.bucketId = this.info.bucketId;
     } else {
-      query.bucketName = this.info.bucketName
+      query.bucketName = this.info.bucketName;
     }
 
     const res = await this.b2.callApi("b2_list_buckets", {
@@ -97,12 +102,16 @@ export default class Bucket {
       body: JSON.stringify(query),
     });
 
-    const {buckets: [bucket]}: { buckets: [] | [BucketInfo] } = await res.json();
+    const {
+      buckets: [bucket],
+    }: { buckets: [] | [BucketInfo] } = await res.json();
 
     if (bucket) {
       return (this.info = bucket);
     } else {
-      throw new BackblazeLibraryError.BadUsage("Bucket missing: " + this.info.bucketName || this.info.bucketInfo)
+      throw new BackblazeLibraryError.BadUsage(
+        "Bucket missing: " + this.info.bucketName || this.info.bucketInfo
+      );
     }
   }
 
@@ -114,32 +123,50 @@ export default class Bucket {
     return SinglePartUpload.requestNew(this);
   }
 
-  async upload(
+  async uploadSinglePart(
     fileName: string,
     data: Buffer | NodeJS.ReadableStream,
-    options: FileUploadOptions = {}
-  ) {
-    let { contentLength } = options;
+    options: FileUploadOptions & { contentLength: number }
+  ): Promise<FileData> {
+    const singlePartUpload = await this.getSinglePartUpload();
+    try {
+      const fileData = await singlePartUpload.upload(fileName, data, options);
 
-    if (data instanceof Buffer) {
-      contentLength = data.byteLength;
+      return fileData === false
+        ? this.uploadSinglePart(fileName, data, options)
+        : fileData;
+    } finally {
+      if (!singlePartUpload.inUse)
+        this._singlePartUploads.push(singlePartUpload);
     }
+  }
+
+  async upload(
+    fileName: string,
+    data: Buffer,
+    options: FileUploadOptions = {}
+  ): Promise<File> {
+    const contentLength = data.byteLength;
 
     if (
       typeof contentLength !== "undefined" &&
       contentLength <= this.b2.recommendedPartSize
     ) {
-      const singlePartUpload = await this.getSinglePartUpload();
-      try {
-        return singlePartUpload.upload(fileName, data, {
-          ...options,
-          contentLength,
-        });
-      } finally {
-        if (!singlePartUpload.inUse)
-          this._singlePartUploads.push(singlePartUpload);
-      }
+      const fileData = await this.uploadSinglePart(fileName, data, {
+        ...options,
+        contentLength,
+      });
+      return new File(this, fileData);
     } else {
+      const file = new File(this, { fileName });
+      const writeStream = file.createWriteStream();
+      return new Promise((res, rej) => {
+        writeStream.on("error", rej);
+        writeStream.on("finish", () => {
+          res(file);
+        });
+        writeStream.end(data);
+      });
     }
   }
 }

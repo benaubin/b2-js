@@ -16,6 +16,13 @@ export default class AppendHashStream extends Transform {
   }
 
   _flush() {
-    this.push(this.hash.digest("hex"), "utf-8")
+    this.push(this.digest(), "utf-8");
+  }
+
+  private _digest?: string;
+  digest() { 
+    if(typeof this._digest !== "undefined") return this._digest;
+
+    return (this._digest = this.hash.digest("hex"))
   }
 }
