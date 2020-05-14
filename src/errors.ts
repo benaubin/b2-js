@@ -1,6 +1,13 @@
 export class BackblazeLibraryError extends Error {}
+
+export namespace BackblazeLibraryError {
+  export class BadUsage extends Error {}
+
+  export class Internal extends Error {}
+}
+
 class BackblazeServerError extends BackblazeLibraryError {
-  readonly apiData: BackblazeErrorResponse
+  readonly apiData: BackblazeErrorResponse;
 
   constructor(apiData: BackblazeErrorResponse) {
     super(apiData.message);
@@ -17,13 +24,14 @@ export interface BackblazeErrorResponse {
 namespace BackblazeServerError {
   export class UnknownServerError extends BackblazeServerError {}
 
-  /** 
+  /**
    * The request had the wrong fields or illegal values.
    * The message returned with the error will describe the problem.
    */
   export class BadRequest extends BackblazeServerError {}
 
   export class UsageCapExceeded extends BackblazeServerError {}
+  export class DownloadCapExceeded extends UsageCapExceeded {}
 
   /** The auth token is valid, but does not allow you to make this call with these parameters */
   export class UnauthorizedRequest extends BackblazeServerError {}
@@ -41,6 +49,8 @@ namespace BackblazeServerError {
   export class TooManyRequests extends BackblazeServerError {}
 
   export class InternalServerError extends BackblazeServerError {}
+
+  export class RangeNotSatisfiable extends BackblazeServerError {}
 
   export class ServiceUnavailable extends BackblazeServerError {}
 }

@@ -17,7 +17,7 @@ export interface AuthorizeAccountSuccessResponse {
    * If you use it, you may find that it takes longer overall to upload a large file.
    */
   absoluteMinimumPartSize: number;
-  allowed: KeyAllowed;
+  allowed: KeyAllowedField;
   /** The base URL to use for all API calls except for uploading and downloading files. */
   apiUrl: "https://apiNNN.backblazeb2.com";
   /** The base URL to use for downloading files. */
