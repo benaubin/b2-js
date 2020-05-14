@@ -1,5 +1,6 @@
 import BackblazeError from "../errors";
 import B2 from "../b2";
+import fetch from "node-fetch";
 
 export interface AuthorizeAccountSuccessResponse {
   /** The identifier for the account. */
@@ -63,14 +64,12 @@ export interface B2Credentials {
   applicationKey: string
 }
 
-const authorizationUrl = `https://api.backblazeb2.com/b2api/${B2.apiVersion}/b2_authorize_account`;
-
 export async function authorize({applicationKeyId, applicationKey}: B2Credentials) {
   const combinedCredentials = Buffer.from(
-    applicationKey + ":" + applicationKeyId
-  ).toString("base64");
+    applicationKeyId + ":" + applicationKey
+  , "utf-8").toString("base64");
 
-  const res = await fetch(authorizationUrl, {
+  const res = await fetch(`https://api.backblazeb2.com/b2api/${B2.apiVersion}/b2_authorize_account`, {
     headers: {
       "Authorization": `Basic ${combinedCredentials}`
     }

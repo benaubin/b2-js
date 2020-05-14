@@ -1,10 +1,11 @@
-import fetch, { RequestInit } from "node-fetch";
+import fetch, { RequestInit, Response } from "node-fetch";
 import {
   authorize,
   B2Credentials,
   AuthorizeAccountSuccessResponse,
 } from "./api-operations/authorize-account";
 import BackblazeServerError, { BackblazeErrorResponse } from "./errors";
+import Bucket, { MinimumBucketInfo } from "./bucket";
 
 interface RequestOptions {
   maxRetries?: number;
@@ -14,13 +15,13 @@ interface RequestOptions {
 export default class B2 {
   private credentials: B2Credentials;
 
-  private auth: AuthorizeAccountSuccessResponse | undefined;
+  private auth!: AuthorizeAccountSuccessResponse;
 
   get recommendedPartSize() {
     return this.auth.recommendedPartSize;
   }
 
-  static readonly apiVersion: string = "v5";
+  static readonly apiVersion: string = "v2";
 
   private constructor(credentials: B2Credentials) {
     this.credentials = credentials;
@@ -49,7 +50,7 @@ export default class B2 {
     request: RequestInit,
     _options: RequestOptions,
     retries: number = 0
-  ) {
+  ): Promise<Response> {
     const options = { maxRetries: 5, backoff: 150, ..._options };
     const { maxRetries, backoff } = options;
 
@@ -147,5 +148,14 @@ export default class B2 {
   ) {
     const url = [this.auth.downloadUrl, "file", bucketName, fileName].join("/");
     return this.request(url, request, opts);
+  }
+
+  bucket(name: string): Promise<Bucket>;
+  bucket(info: MinimumBucketInfo): Promise<Bucket>;
+  async bucket(info: string | MinimumBucketInfo): Promise<Bucket> {
+    return new Bucket(
+      this,
+      typeof info === "string" ? { bucketName: info } : info
+    );
   }
 }

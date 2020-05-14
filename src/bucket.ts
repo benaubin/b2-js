@@ -1,6 +1,7 @@
 import B2 from "./b2";
 import { FileUploadOptions } from "./file";
 import SinglePartUpload from "./single-part-upload";
+import { BackblazeLibraryError } from "./errors";
 
 export enum BucketType {
   allPublic = "allPublic",
@@ -81,18 +82,31 @@ export default class Bucket {
   }
 
   async refreshBucketInfo(): Promise<BucketInfo> {
+    const query: any = {
+      accountId: this.b2["auth"].accountId,
+    }
+
+    if (typeof this.info.bucketId !== "undefined") {
+      query.bucketId = this.info.bucketId
+    } else {
+      query.bucketName = this.info.bucketName
+    }
+
     const res = await this.b2.callApi("b2_list_buckets", {
       method: "POST",
-      body: JSON.stringify({
-        accountId: this.b2["auth"].accountId,
-        bucketId: this.info.bucketId,
-        bucketName: this.info.bucketName,
-      }),
+      body: JSON.stringify(query),
     });
-    return (this.info = await res.json());
+
+    const {buckets: [bucket]}: { buckets: [] | [BucketInfo] } = await res.json();
+
+    if (bucket) {
+      return (this.info = bucket);
+    } else {
+      throw new BackblazeLibraryError.BadUsage("Bucket missing: " + this.info.bucketName || this.info.bucketInfo)
+    }
   }
 
-  private _singlePartUploads: SinglePartUpload[];
+  private _singlePartUploads: SinglePartUpload[] = [];
   private async getSinglePartUpload(): Promise<SinglePartUpload> {
     let upload = this._singlePartUploads.pop();
     if (typeof upload !== "undefined") return upload;
@@ -103,7 +117,7 @@ export default class Bucket {
   async upload(
     fileName: string,
     data: Buffer | NodeJS.ReadableStream,
-    options: FileUploadOptions
+    options: FileUploadOptions = {}
   ) {
     let { contentLength } = options;
 

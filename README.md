@@ -27,10 +27,23 @@
 yarn install
 ```
 
-## Run tests
+## Usage
 
-```sh
-yarn run test
+```js
+import B2 from "./src/b2";
+
+const b2 = await B2.authorize({ applicationKeyId: "KEY_ID", applicationKey: "SECRET_KEY"});
+const bucket = b2.bucket("bucket-name");
+
+// Single-part upload (for content smaller than ~100MB)
+bucket.upload("test.txt", Buffer.from("foobar")) // Buffer content-length is automatically detected to determine which upload type to attempt.
+
+const stream = require("fs").createReadStream("./README.md")
+bucket.upload("readme", stream, {contentLength: 2174}) // In order to conduct a single-part upload with a stream,
+                                                       // the content length of the stream in bytes must be known.
+                                                       // Otherwise, a multi-part upload will be attempted.
+                                                       // It is STRONGLY recommended to pass `contentLength` whenever possible
+                                                       // to minimize the number of requests which must be attempted.
 ```
 
 ## Author

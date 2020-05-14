@@ -1,8 +1,9 @@
 import B2 from "./b2";
-import Bucket, { FileUploadOptions } from "./bucket";
+import Bucket from "./bucket";
 import BackblazeServerError, { BackblazeLibraryError } from "./errors";
 import fetch from "node-fetch";
-import { FileInformation } from "./file";
+import { FileInformation, FileUploadOptions } from "./file";
+import AppendHashStream from "./append-hash-stream";
 
 interface SinglePartUploadUrlInfo {
   bucketId: string;
@@ -11,14 +12,11 @@ interface SinglePartUploadUrlInfo {
 }
 
 export default class SinglePartUpload {
-  bucket: Bucket;
-  get b2(): B2 {
-    return this.bucket.b2;
-  }
+  private bucket: Bucket;
 
   private info: SinglePartUploadUrlInfo;
 
-  private _inUse: boolean;
+  private _inUse: boolean = false;
   get inUse() {
     return this._inUse;
   }
@@ -30,6 +28,7 @@ export default class SinglePartUpload {
 
   static async requestNew(bucket: Bucket): Promise<SinglePartUpload> {
     const res = await bucket.b2.callApi("b2_get_upload_url", {
+      method: "POST",
       body: JSON.stringify({
         bucketId: await bucket.getBucketId(),
       }),
@@ -51,23 +50,33 @@ export default class SinglePartUpload {
       contentType = "application/octet-stream",
       sha1,
       contentLength,
-      maxRetries,
+      maxRetries = 5,
       backoff = 150,
     } = options;
+
+    if (typeof sha1 === "undefined") {
+      const stream = new AppendHashStream("sha1");
+
+      if (data instanceof Buffer) {
+        stream.end(data);
+      } else {
+        data.pipe(stream);
+      }
+
+      sha1 = "hex_digits_at_end"; // Let B2 know we'll be deferring the hash.
+      data = stream;
+      contentLength += 40; // Length of the hash
+    }
 
     const res = await fetch(this.info.uploadUrl, {
       method: "POST",
       headers: {
-        ...infoHeaders,
+        ...(infoHeaders as Record<string, string>),
         Authorization: this.info.authorizationToken,
         "X-Bz-File-Name": B2.uriEncodeString(fileName),
-        "Content-Type": typeof contentType === "undefined" ? "" : contentType,
-        "Content-Length":
-          typeof sha1 === "undefined"
-            ? (contentLength + 40).toString()
-            : contentLength.toString(),
-        "X-Bz-Content-Sha1":
-          typeof sha1 === "undefined" ? "hex_digits_at_end" : sha1,
+        "Content-Type": contentType,
+        "Content-Length": contentLength.toString(),
+        "X-Bz-Content-Sha1": sha1,
       },
       body: data,
     });
@@ -93,7 +102,6 @@ export default class SinglePartUpload {
       case 408 /** timeout */:
         if (retries >= maxRetries)
           throw new BackblazeServerError.RequestTimeout(resData);
-      // otherwise, fall-through
       case 429 /** rate-limit */:
         if (retries >= maxRetries)
           throw new BackblazeServerError.TooManyRequests(resData);
@@ -115,15 +123,13 @@ export default class SinglePartUpload {
           "Sent a request with the wrong HTTP method. B2 gave message: " +
             resData.message
         );
+      default:
+        throw new BackblazeServerError.UnknownServerError(resData);
     }
   }
 
   /**
-   *
-   *
-   * @param fileName The name of this file.
-   * @param stream The data to upload
-   * @param options Must include `{ contentLength: number }`
+   * @private
    * @returns `false` when this single part upload is no longer valid.
    */
   upload(
@@ -132,11 +138,7 @@ export default class SinglePartUpload {
     opts: FileUploadOptions & { contentLength: number }
   ): Promise<FileInformation | false>;
   /**
-   *
-   *
-   * @param fileName The name of this file.
-   * @param buffer The data to upload
-   * @param options
+   * @private
    * @returns `false` when this single part upload is no longer valid.
    */
   upload(

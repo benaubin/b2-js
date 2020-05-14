@@ -4,6 +4,7 @@
   "description": "A powerful library for using Backblaze B2.",
   "main": "dist/index.js",
   "scripts": {
+    "repl": "node -r ts-node/register --experimental-modules",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -23,10 +24,14 @@
   },
   "homepage": "https://github.com/benaubin/b2-js#readme",
   "dependencies": {
-    "node-fetch": "^2.6.0"
+    "node-fetch": "^2.6.0",
+    "tslib": "^2.0.0"
   },
   "devDependencies": {
+    "@types/form-data": "^2.5.0",
     "@types/node": "^14.0.1",
-    "@types/node-fetch": "^2.5.7"
+    "@types/node-fetch": "^2.5.7",
+    "ts-node": "^8.10.1",
+    "typescript": "^3.9.2"
   }
 }

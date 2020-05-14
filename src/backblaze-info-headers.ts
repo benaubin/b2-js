@@ -9,6 +9,15 @@
  * See [Files] for further details about HTTP header size limit.
  *
  * [Files]: https://www.backblaze.com/b2/docs/files.htmlx
+ * 
+ * ## Custom headers:
+ * 
+ * - Must use the format `X-Bz-Info-*` for the header name.
+ * - Up to 10 of these headers may be present.
+ * - The * part of the header name is replaced with the name of a custom field in the file
+ *   information stored with the file, and the value is an arbitrary UTF-8 string, percent-encoded.
+ * - The same info headers sent with the upload will be returned with the download.
+ * - The header name is case insensitive.
  */
 export interface BackblazeInfoHeaders {
   /**
@@ -17,19 +26,6 @@ export interface BackblazeInfoHeaders {
    * since midnight, January 1, 1970 UTC. This fits in a 64 bit integer.
    */
   "X-Bz-Info-src_last_modified_millis"?: string;
-  /**
-   * Must use the format `X-Bz-Info-*` for the header name.
-   *
-   * Up to 10 of these headers may be present.
-   *
-   * The * part of the header name is replaced with the name of a custom field in the file
-   * information stored with the file, and the value is an arbitrary UTF-8 string, percent-encoded.
-   *
-   * The same info headers sent with the upload will be returned with the download.
-   *
-   * The header name is case insensitive.
-   */
-  [infoHeader: string]: string;
 }
 export interface BackblazeInfoHeadersDownload extends BackblazeInfoHeaders {
   "X-Bz-Info-b2-content-disposition"?: string;
