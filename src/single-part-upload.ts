@@ -2,7 +2,7 @@ import B2 from "./b2";
 import Bucket from "./bucket";
 import BackblazeServerError, { BackblazeLibraryError } from "./errors";
 import fetch from "node-fetch";
-import { FileInformation, FileUploadOptions } from "./file";
+import { FileData, FileUploadOptions } from "./file";
 import AppendHashStream from "./append-hash-stream";
 
 interface SinglePartUploadUrlInfo {
@@ -44,9 +44,9 @@ export default class SinglePartUpload {
     data: NodeJS.ReadableStream | Buffer,
     options: FileUploadOptions & { contentLength: number },
     retries: number
-  ): Promise<FileInformation | false> {
+  ): Promise<FileData | false> {
     let {
-      infoHeaders = {},
+      fileInfo,
       contentType = "application/octet-stream",
       sha1,
       contentLength,
@@ -68,16 +68,26 @@ export default class SinglePartUpload {
       contentLength += 40; // Length of the hash
     }
 
+    const headers: Record<string, string> = {
+      Authorization: this.info.authorizationToken,
+      "X-Bz-File-Name": B2.uriEncodeString(fileName),
+      "Content-Type": contentType,
+      "Content-Length": contentLength.toString(),
+      "X-Bz-Content-Sha1": sha1,
+    }
+
+    if(typeof fileInfo !== "undefined") {
+      for (const key in fileInfo) {
+        if (fileInfo.hasOwnProperty(key)) {
+          const val = fileInfo[key];
+          if(typeof val !== "undefined") headers["X-Bz-Info-" + key] = val;
+        }
+      }
+    }
+
     const res = await fetch(this.info.uploadUrl, {
       method: "POST",
-      headers: {
-        ...(infoHeaders as Record<string, string>),
-        Authorization: this.info.authorizationToken,
-        "X-Bz-File-Name": B2.uriEncodeString(fileName),
-        "Content-Type": contentType,
-        "Content-Length": contentLength.toString(),
-        "X-Bz-Content-Sha1": sha1,
-      },
+      headers,
       body: data,
     });
 
@@ -136,7 +146,7 @@ export default class SinglePartUpload {
     name: string,
     stream: NodeJS.ReadableStream | Buffer,
     opts: FileUploadOptions & { contentLength: number }
-  ): Promise<FileInformation | false>;
+  ): Promise<FileData | false>;
   /**
    * @private
    * @returns `false` when this single part upload is no longer valid.
@@ -145,18 +155,18 @@ export default class SinglePartUpload {
     fileName: string,
     buffer: Buffer,
     options: FileUploadOptions
-  ): Promise<FileInformation | false>;
+  ): Promise<FileData | false>;
   async upload(
     fileName: string,
     data: NodeJS.ReadableStream | Buffer,
     options: FileUploadOptions
-  ): Promise<FileInformation | false> {
+  ): Promise<FileData | false> {
     if (this.inUse)
       throw new BackblazeLibraryError.BadUsage(
         "Tried to use a Single Part Upload which is in use."
       );
 
-    let result: FileInformation | false | undefined;
+    let result: FileData | false | undefined;
 
     try {
       this._inUse = true;
