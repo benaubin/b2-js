@@ -1,0 +1,284 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>b2-js</title>
+	<meta name="description" content="Documentation for b2-js">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="assets/js/search.json" data-base=".">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="index.html" class="title">b2-js</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="globals.html">Globals</a>
+				</li>
+			</ul>
+			<h1>b2-js</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<div class="tsd-panel tsd-typography">
+				<h1 align="center">Welcome to b2-js 👋</h1>
+				<p>
+					<a href="https://www.npmjs.com/package/b2-js" target="_blank">
+						<img alt="Version" src="https://img.shields.io/npm/v/b2-js.svg">
+					</a>
+					<a href="https://github.com/benaubin/b2-js#readme" target="_blank">
+						<img alt="Documentation" src="https://img.shields.io/badge/documentation-yes-brightgreen.svg" />
+					</a>
+					<a href="https://github.com/benaubin/b2-js/graphs/commit-activity" target="_blank">
+						<img alt="Maintenance" src="https://img.shields.io/badge/Maintained%3F-yes-green.svg" />
+					</a>
+					<a href="https://github.com/benaubin/b2-js/blob/master/LICENSE" target="_blank">
+						<img alt="License: MIT" src="https://img.shields.io/github/license/benaubin/b2-js" />
+					</a>
+					<a href="https://twitter.com/BenAubin_" target="_blank">
+						<img alt="Twitter: BenAubin_" src="https://img.shields.io/twitter/follow/BenAubin_.svg?style=social" />
+					</a>
+				</p>
+				<blockquote>
+					<p>A powerful library for using Backblaze B2.</p>
+				</blockquote>
+				<a href="https://mintere.com">
+					<img src="https://app.mintere.com/assets/logo-no-space-cae371bbf448f4dcc2596ff65617601dea1da09e35fd5a217039642a93752517.png" width="100"/>
+				</a>
+				<p>Developed for <a href="https://mintere.site">Mintere Sites</a>, a platform enabling
+				websites to be global, easy-to-develop, performant and dynamic.</p>
+				<p>Requires ES2018</p>
+				<a href="#install" id="install" style="color: inherit; text-decoration: none;">
+					<h2>Install</h2>
+				</a>
+				<pre><code class="language-sh">yarn install</code></pre>
+				<a href="#principles" id="principles" style="color: inherit; text-decoration: none;">
+					<h2>Principles</h2>
+				</a>
+				<ul>
+					<li>Backblaze allows uploading files as a single-part or as multiple parts.
+						However, you must know the length of each file in advance, and you cannot
+					use chunked-encoding.</li>
+					<li>Single-part uploads are generally faster for smaller files. Backblaze recommends
+					a part-size.</li>
+					<li>The library should handle the complexity of working with the B2 API, including
+					handling splitting streams into multi-part uploads.</li>
+				</ul>
+				<a href="#key-considerations" id="key-considerations" style="color: inherit; text-decoration: none;">
+					<h2>Key Considerations</h2>
+				</a>
+				<ul>
+					<li>For streams of unknown length, each part must be read into memory (up-to 100MB).
+					You can configure this down to <code>b2.auth.absoluteMinimumPartSize</code> using <code>b2.partSize = BYTES</code>.</li>
+					<li>It&#39;s generally faster to use single part upload for smaller files. The library will make
+					the decision for you based on <code>b2.partSize</code>.</li>
+				</ul>
+				<a href="#usage" id="usage" style="color: inherit; text-decoration: none;">
+					<h2>Usage</h2>
+				</a>
+				<pre><code class="language-js"><span class="hljs-keyword">import</span> B2 <span class="hljs-keyword">from</span> <span class="hljs-string">"./src/b2"</span>;
+
+<span class="hljs-keyword">const</span> b2 = <span class="hljs-keyword">await</span> B2.authorize({ <span class="hljs-attr">applicationKeyId</span>: <span class="hljs-string">"KEY_ID"</span>, <span class="hljs-attr">applicationKey</span>: <span class="hljs-string">"SECRET_KEY"</span>});
+<span class="hljs-keyword">const</span> bucket = b2.bucket(<span class="hljs-string">"bucket-name"</span>);</code></pre>
+				<a href="#uploading" id="uploading" style="color: inherit; text-decoration: none;">
+					<h3>Uploading</h3>
+				</a>
+				<a href="#buffers" id="buffers" style="color: inherit; text-decoration: none;">
+					<h4>Buffers</h4>
+				</a>
+				<p>When uploading Buffers, the library automatically decides whether to conduct a single or multi-part
+				upload based on the Buffer&#39;s <code>byteLength</code>.</p>
+				<pre><code class="language-js"><span class="hljs-comment">// a single-part upload will be attempted.</span>
+bucket.upload(<span class="hljs-string">"test.txt"</span>, Buffer.from(<span class="hljs-string">"foobar"</span>));
+
+<span class="hljs-comment">// a multi-part upload will automatically be attempted for larger files</span>
+bucket.upload(<span class="hljs-string">"test.txt"</span>, Buffer.from(<span class="hljs-string">"*"</span>.repeat(<span class="hljs-number">101</span>*<span class="hljs-number">1000</span>*<span class="hljs-number">1000</span> <span class="hljs-comment">/* 101MB */</span>)));</code></pre>
+				<a href="#streams" id="streams" style="color: inherit; text-decoration: none;">
+					<h4>Streams</h4>
+				</a>
+				<p>When the <code>contentLength</code> is known, you may conduct a single part upload without
+				loading the stream into memory.</p>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> fileStream = <span class="hljs-built_in">require</span>(<span class="hljs-string">"fs"</span>).createReadStream(<span class="hljs-string">"./README.md"</span>)
+<span class="hljs-comment">// In order to conduct a single-part upload without loading a stream</span>
+<span class="hljs-comment">// into memory, the content length of the stream in bytes must be known.</span>
+bucket.uploadSinglePart(<span class="hljs-string">"readme"</span>, fileStream, {<span class="hljs-attr">contentLength</span>: <span class="hljs-number">2174</span>}) </code></pre>
+				<p>When the <code>contentLength</code> is unknown, or a stream is too large for a single-part upload,
+					each part of the stream must be loaded into memory in order to size the stream,
+				compute a digest of the content and properly split the stream into parts. </p>
+				<p>If the stream less than or equal to <code>b2.partSize</code> bytes, a single-part upload will
+					be attempted. Otherwise, a multi-part upload will be attempted by loading up-to
+				<code>b2.partSize</code> bytes of the stream into memory at a time.</p>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> file = bucket.file(<span class="hljs-string">"example"</span>);
+<span class="hljs-keyword">const</span> stream = file.createWriteStream();
+
+stream.on(<span class="hljs-string">"error"</span>, (err) =&gt; {
+  <span class="hljs-comment">// handle the error </span>
+  <span class="hljs-comment">// note that retries are automatically attempted before errors are </span>
+  <span class="hljs-comment">// thrown for most potentially recoverable errors, as per the B2 docs.</span>
+})
+
+stream.on(<span class="hljs-string">"finish"</span>, (err) =&gt; {
+  <span class="hljs-comment">// upload done, the file instance has been updated to reflect this</span>
+})
+
+res.body.pipe(stream);</code></pre>
+				<a href="#downloading" id="downloading" style="color: inherit; text-decoration: none;">
+					<h3>Downloading</h3>
+				</a>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> file = bucket.file(<span class="hljs-string">"text.txt"</span>);
+file.createReadStream();</code></pre>
+				<a href="#stat" id="stat" style="color: inherit; text-decoration: none;">
+					<h3>Stat</h3>
+				</a>
+				<a href="#by-id" id="by-id" style="color: inherit; text-decoration: none;">
+					<h4>By id</h4>
+				</a>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> file = bucket.file({<span class="hljs-attr">fileId</span>: <span class="hljs-string">"...."</span>});
+<span class="hljs-keyword">const</span> fileData = <span class="hljs-keyword">await</span> file.stat(); <span class="hljs-comment">//=&gt; see https://www.backblaze.com/b2/docs/b2_get_file_info.html</span></code></pre>
+				<a href="#by-name" id="by-name" style="color: inherit; text-decoration: none;">
+					<h4>By name</h4>
+				</a>
+				<p>Note that statting a file by name involves a Class C transaction
+				as it involves listing files with a call to <code>b2_list_file_names</code>.</p>
+				<pre><code class="language-js"><span class="hljs-keyword">const</span> file = bucket.file(<span class="hljs-string">"text.txt"</span>);
+<span class="hljs-keyword">try</span> {
+  <span class="hljs-keyword">const</span> fileData = <span class="hljs-keyword">await</span> file.stat(); <span class="hljs-comment">//=&gt; see https://www.backblaze.com/b2/docs/b2_get_file_info.html</span>
+} <span class="hljs-keyword">catch</span> (e) {
+  <span class="hljs-keyword">if</span> (e <span class="hljs-keyword">instanceof</span> BackblazeLibraryError.FileNotFound) {
+    <span class="hljs-comment">// handle file not found.</span>
+  } <span class="hljs-keyword">else</span> {
+    <span class="hljs-keyword">throw</span> e;  <span class="hljs-comment">// re-throw the error unchanged</span>
+  }
+}</code></pre>
+				<a href="#author" id="author" style="color: inherit; text-decoration: none;">
+					<h2>Author</h2>
+				</a>
+				<p>👤 <strong>Ben Aubin (benaubin.com)</strong></p>
+				<ul>
+					<li>Website: benaubin.com</li>
+					<li>Twitter: <a href="https://twitter.com/BenAubin_">@BenAubin_</a></li>
+					<li>Github: <a href="https://github.com/benaubin">@benaubin</a></li>
+					<li>LinkedIn: <a href="https://linkedin.com/in/benaubin">@benaubin</a></li>
+				</ul>
+				<a href="#🤝-contributing" id="🤝-contributing" style="color: inherit; text-decoration: none;">
+					<h2>🤝 Contributing</h2>
+				</a>
+				<p>Contributions, issues and feature requests are welcome!<br />Feel free to check <a href="https://github.com/benaubin/b2-js/issues">issues page</a>. You can also take a look at the <a href="https://github.com/benaubin/b2-js/blob/master/CONTRIBUTING.md">contributing guide</a>.</p>
+				<a href="#show-your-support" id="show-your-support" style="color: inherit; text-decoration: none;">
+					<h2>Show your support</h2>
+				</a>
+				<p>Give a ⭐️ if this project helped you!</p>
+				<a href="#📝-license" id="📝-license" style="color: inherit; text-decoration: none;">
+					<h2>📝 License</h2>
+				</a>
+				<p>Copyright © 2020 <a href="https://github.com/benaubin">Ben Aubin (benaubin.com)</a>.<br />
+				This project is <a href="https://github.com/benaubin/b2-js/blob/master/LICENSE">MIT</a> licensed.</p>
+			</div>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="globals.html"><em>Globals</em></a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="modules/_b2_.html">&quot;b2&quot;</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="modules/_api_operations_authorize_account_.html">&quot;api-<wbr>operations/authorize-<wbr>account&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="modules/_api_operations_upload_part_.html">&quot;api-<wbr>operations/upload-<wbr>part&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="modules/_append_hash_stream_.html">&quot;append-<wbr>hash-<wbr>stream&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="modules/_bucket_.html">&quot;bucket&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="modules/_errors_.html">&quot;errors&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="modules/_file_.html">&quot;file&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="modules/_file_upload_stream_.html">&quot;file-<wbr>upload-<wbr>stream&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="modules/_single_part_upload_.html">&quot;single-<wbr>part-<wbr>upload&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>

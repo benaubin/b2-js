@@ -4,6 +4,7 @@
   "description": "A powerful library for using Backblaze B2.",
   "main": "dist/b2.js",
   "scripts": {
+    "docs": "typedoc",
     "prepublish": "npm run build",
     "build": "tsc -p .",
     "repl": "node -r ts-node/register --experimental-modules",
@@ -34,6 +35,7 @@
     "@types/node": "^14.0.1",
     "@types/node-fetch": "^2.5.7",
     "ts-node": "^8.10.1",
+    "typedoc": "^0.17.6",
     "typescript": "^3.9.2"
   }
 }

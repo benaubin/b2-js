@@ -1,0 +1,373 @@
+<!doctype html>
+<html class="default no-js">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>FileInfo | b2-js</title>
+	<meta name="description" content="Documentation for b2-js">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="../assets/css/main.css">
+</head>
+<body>
+<header>
+	<div class="tsd-page-toolbar">
+		<div class="container">
+			<div class="table-wrap">
+				<div class="table-cell" id="tsd-search" data-index="../assets/js/search.json" data-base="..">
+					<div class="field">
+						<label for="tsd-search-field" class="tsd-widget search no-caption">Search</label>
+						<input id="tsd-search-field" type="text" />
+					</div>
+					<ul class="results">
+						<li class="state loading">Preparing search index...</li>
+						<li class="state failure">The search index is not available</li>
+					</ul>
+					<a href="../index.html" class="title">b2-js</a>
+				</div>
+				<div class="table-cell" id="tsd-widgets">
+					<div id="tsd-filter">
+						<a href="#" class="tsd-widget options no-caption" data-toggle="options">Options</a>
+						<div class="tsd-filter-group">
+							<div class="tsd-select" id="tsd-filter-visibility">
+								<span class="tsd-select-label">All</span>
+								<ul class="tsd-select-list">
+									<li data-value="public">Public</li>
+									<li data-value="protected">Public/Protected</li>
+									<li data-value="private" class="selected">All</li>
+								</ul>
+							</div>
+							<input type="checkbox" id="tsd-filter-inherited" checked />
+							<label class="tsd-widget" for="tsd-filter-inherited">Inherited</label>
+							<input type="checkbox" id="tsd-filter-externals" checked />
+							<label class="tsd-widget" for="tsd-filter-externals">Externals</label>
+						</div>
+					</div>
+					<a href="#" class="tsd-widget menu no-caption" data-toggle="menu">Menu</a>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="tsd-page-title">
+		<div class="container">
+			<ul class="tsd-breadcrumb">
+				<li>
+					<a href="../globals.html">Globals</a>
+				</li>
+				<li>
+					<a href="../modules/_file_.html">&quot;file&quot;</a>
+				</li>
+				<li>
+					<a href="_file_.fileinfo.html">FileInfo</a>
+				</li>
+			</ul>
+			<h1>Interface FileInfo</h1>
+		</div>
+	</div>
+</header>
+<div class="container container-main">
+	<div class="row">
+		<div class="col-8 col-content">
+			<section class="tsd-panel tsd-comment">
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<p>Where sensible, Backblaze recommends these values to allow different B2 clients
+						and the B2 web user interface to interoperate correctly</p>
+					</div>
+					<p>The file name and file info must fit, along with the other necessary headers,
+						within a 7,000 byte limit. This limit applies to the fully encoded HTTP header line,
+					including the carriage-return and newline.</p>
+					<p>See <a href="https://www.backblaze.com/b2/docs/files.htmlx">Files</a> for further details about HTTP header size limit.</p>
+				</div>
+			</section>
+			<section class="tsd-panel tsd-hierarchy">
+				<h3>Hierarchy</h3>
+				<ul class="tsd-hierarchy">
+					<li>
+						<span class="target">FileInfo</span>
+					</li>
+				</ul>
+			</section>
+			<section class="tsd-panel tsd-kind-interface tsd-parent-kind-module tsd-is-external">
+				<h3 class="tsd-before-signature">Indexable</h3>
+				<div class="tsd-signature tsd-kind-icon"><span class="tsd-signature-symbol">[</span>key: <span class="tsd-signature-type">string</span><span class="tsd-signature-symbol">]: </span><span class="tsd-signature-type">string</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">undefined</span></div>
+				<div class="tsd-comment tsd-typography">
+					<div class="lead">
+						<a href="#custom-headers" id="custom-headers" style="color: inherit; text-decoration: none;">
+							<h2>Custom headers:</h2>
+						</a>
+					</div>
+					<ul>
+						<li>Must use the format <code>X-Bz-Info-*</code> for the header name.</li>
+						<li>Up to 10 of these headers may be present.</li>
+						<li>The * part of the header name is replaced with the name of a custom field in the file
+						information stored with the file, and the value is an arbitrary UTF-8 string, percent-encoded.</li>
+						<li>The same info headers sent with the upload will be returned with the download.</li>
+						<li>The header name is case insensitive.</li>
+					</ul>
+				</div>
+			</section>
+			<section class="tsd-panel-group tsd-index-group">
+				<h2>Index</h2>
+				<section class="tsd-panel tsd-index-panel">
+					<div class="tsd-index-content">
+						<section class="tsd-index-section tsd-is-external">
+							<h3>Properties</h3>
+							<ul class="tsd-index-list">
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_file_.fileinfo.html#b2_cache_control" class="tsd-kind-icon">b2-<wbr>cache-<wbr>control</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_file_.fileinfo.html#b2_content_encoding" class="tsd-kind-icon">b2-<wbr>content-<wbr>encoding</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_file_.fileinfo.html#b2_content_type" class="tsd-kind-icon">b2-<wbr>content-<wbr>type</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_file_.fileinfo.html#b2_expires" class="tsd-kind-icon">b2-<wbr>expires</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_file_.fileinfo.html#content_disposition" class="tsd-kind-icon">content-<wbr>disposition</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_file_.fileinfo.html#content_language" class="tsd-kind-icon">content-<wbr>language</a></li>
+								<li class="tsd-kind-property tsd-parent-kind-interface tsd-is-external"><a href="_file_.fileinfo.html#src_last_modified_millis" class="tsd-kind-icon">src_<wbr>last_<wbr>modified_<wbr>millis</a></li>
+							</ul>
+						</section>
+					</div>
+				</section>
+			</section>
+			<section class="tsd-panel-group tsd-member-group tsd-is-external">
+				<h2>Properties</h2>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="b2_cache_control" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> b2-<wbr>cache-<wbr>control</h3>
+					<div class="tsd-signature tsd-kind-icon">b2-<wbr>cache-<wbr>control<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/benaubin/b2-js/blob/97cfe49/src/file.ts#L69">src/file.ts:69</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>If this is present, B2 will use it as the value of the &#39;Cache-Control&#39; header when the file is
+								downloaded (unless it&#39;s overridden by a value given in the download request), and overriding
+							the value defined at the bucket level.</p>
+						</div>
+						<p>The value must match the grammar specified in RFC 2616.</p>
+						<p>Note that this file info will not be included in downloads as a x-bz-info-cache-control header.
+						Instead, it (or the value specified in a request) will be in the Cache-Control header.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="b2_content_encoding" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> b2-<wbr>content-<wbr>encoding</h3>
+					<div class="tsd-signature tsd-kind-icon">b2-<wbr>content-<wbr>encoding<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/benaubin/b2-js/blob/97cfe49/src/file.ts#L79">src/file.ts:79</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>If this is present, B2 will use it as the value of the &#39;Content-Encoding&#39; header when the file
+							is downloaded (unless it&#39;s overridden by a value given in the download request).</p>
+						</div>
+						<p>The value must match the grammar specified in RFC 2616.</p>
+						<p>Note that this file info will not be included in downloads as a x-bz-info-b2-content-encoding header.
+						Instead, it (or the value specified in a request) will be in the Content-Encoding header.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="b2_content_type" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> b2-<wbr>content-<wbr>type</h3>
+					<div class="tsd-signature tsd-kind-icon">b2-<wbr>content-<wbr>type<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/benaubin/b2-js/blob/97cfe49/src/file.ts#L89">src/file.ts:89</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>If this is present, B2 will use it as the value of the &#39;Content-Type&#39; header when the file is downloaded
+							(unless it&#39;s overridden by a value given in the download request).</p>
+						</div>
+						<p>The value must match the grammar specified in RFC 2616.</p>
+						<p>Note that this file info will not be included in downloads as a x-bz-info-b2-content-type header.
+						Instead, it (or the value specified in a request) will be in the Content-Type header.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="b2_expires" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> b2-<wbr>expires</h3>
+					<div class="tsd-signature tsd-kind-icon">b2-<wbr>expires<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/benaubin/b2-js/blob/97cfe49/src/file.ts#L58">src/file.ts:58</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>If this is present, B2 will use it as the value of the &#39;Expires&#39; header when the file is downloaded
+							(unless it&#39;s overridden by a value given in the download request).</p>
+						</div>
+						<p>The value must match the grammar specified in RFC 2616.</p>
+						<p>Note that this file info will not be included in downloads as a x-bz-info-b2-expires header.
+						Instead, it (or the value specified in a request) will be in the Expires header.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="content_disposition" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> content-<wbr>disposition</h3>
+					<div class="tsd-signature tsd-kind-icon">content-<wbr>disposition<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/benaubin/b2-js/blob/97cfe49/src/file.ts#L37">src/file.ts:37</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>If this is present, B2 will use it as the value of the &#39;Content-Disposition&#39; header
+								when the file is downloaded (unless it&#39;s overridden by a value given in the download request).
+								The value must match the grammar specified in RFC 6266.
+							Parameter continuations are not supported.</p>
+						</div>
+						<p>&#39;Extended-value&#39;s are supported for charset &#39;UTF-8&#39; (case-insensitive) when the language is empty.</p>
+						<p>Note that this file info will not be included in downloads as a x-bz-info-b2-content-disposition header.
+						Instead, it (or the value specified in a request) will be in the Content-Disposition.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="content_language" class="tsd-anchor"></a>
+					<h3><span class="tsd-flag ts-flagOptional">Optional</span> content-<wbr>language</h3>
+					<div class="tsd-signature tsd-kind-icon">content-<wbr>language<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">undefined</span><span class="tsd-signature-symbol"> | </span><span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/benaubin/b2-js/blob/97cfe49/src/file.ts#L48">src/file.ts:48</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>If this is present, B2 will use it as the value of the &#39;Content-Language&#39; header when the file
+							is downloaded (unless it&#39;s overridden by a value given in the download request).</p>
+						</div>
+						<p>The value must match the grammar specified in RFC 2616.</p>
+						<p>Note that this file info will not be included in downloads as a x-bz-info-b2-content-language header.</p>
+						<p>Instead, it (or the value specified in a request) will be in the Content-Language header.</p>
+					</div>
+				</section>
+				<section class="tsd-panel tsd-member tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+					<a name="src_last_modified_millis" class="tsd-anchor"></a>
+					<h3>src_<wbr>last_<wbr>modified_<wbr>millis</h3>
+					<div class="tsd-signature tsd-kind-icon">src_<wbr>last_<wbr>modified_<wbr>millis<span class="tsd-signature-symbol">:</span> <span class="tsd-signature-type">string</span></div>
+					<aside class="tsd-sources">
+						<ul>
+							<li>Defined in <a href="https://github.com/benaubin/b2-js/blob/97cfe49/src/file.ts#L24">src/file.ts:24</a></li>
+						</ul>
+					</aside>
+					<div class="tsd-comment tsd-typography">
+						<div class="lead">
+							<p>The value should be a base 10 number which represents a UTC time when the
+								original source file was last modified. It is a base 10 number of milliseconds
+							since midnight, January 1, 1970 UTC. This fits in a 64 bit integer.</p>
+						</div>
+					</div>
+				</section>
+			</section>
+		</div>
+		<div class="col-4 col-menu menu-sticky-wrap menu-highlight">
+			<nav class="tsd-navigation primary">
+				<ul>
+					<li class="globals  ">
+						<a href="../globals.html"><em>Globals</em></a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Internals</span>
+					</li>
+					<li class=" tsd-kind-module">
+						<a href="../modules/_b2_.html">&quot;b2&quot;</a>
+					</li>
+					<li class="label tsd-is-external">
+						<span>Externals</span>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="../modules/_api_operations_authorize_account_.html">&quot;api-<wbr>operations/authorize-<wbr>account&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="../modules/_api_operations_upload_part_.html">&quot;api-<wbr>operations/upload-<wbr>part&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="../modules/_append_hash_stream_.html">&quot;append-<wbr>hash-<wbr>stream&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="../modules/_bucket_.html">&quot;bucket&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="../modules/_errors_.html">&quot;errors&quot;</a>
+					</li>
+					<li class="current tsd-kind-module tsd-is-external">
+						<a href="../modules/_file_.html">&quot;file&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="../modules/_file_upload_stream_.html">&quot;file-<wbr>upload-<wbr>stream&quot;</a>
+					</li>
+					<li class=" tsd-kind-module tsd-is-external">
+						<a href="../modules/_single_part_upload_.html">&quot;single-<wbr>part-<wbr>upload&quot;</a>
+					</li>
+				</ul>
+			</nav>
+			<nav class="tsd-navigation secondary menu-sticky">
+				<ul class="before-current">
+					<li class=" tsd-kind-enum tsd-parent-kind-module tsd-is-external">
+						<a href="../enums/_file_.fileaction.html" class="tsd-kind-icon">File<wbr>Action</a>
+					</li>
+					<li class=" tsd-kind-class tsd-parent-kind-module tsd-is-external">
+						<a href="../classes/_file_.file.html" class="tsd-kind-icon">File</a>
+					</li>
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-external">
+						<a href="_file_.filedata.html" class="tsd-kind-icon">File<wbr>Data</a>
+					</li>
+				</ul>
+				<ul class="current">
+					<li class="current tsd-kind-interface tsd-parent-kind-module tsd-is-external">
+						<a href="_file_.fileinfo.html" class="tsd-kind-icon">File<wbr>Info</a>
+						<ul>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="_file_.fileinfo.html#b2_cache_control" class="tsd-kind-icon">b2-<wbr>cache-<wbr>control</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="_file_.fileinfo.html#b2_content_encoding" class="tsd-kind-icon">b2-<wbr>content-<wbr>encoding</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="_file_.fileinfo.html#b2_content_type" class="tsd-kind-icon">b2-<wbr>content-<wbr>type</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="_file_.fileinfo.html#b2_expires" class="tsd-kind-icon">b2-<wbr>expires</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="_file_.fileinfo.html#content_disposition" class="tsd-kind-icon">content-<wbr>disposition</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="_file_.fileinfo.html#content_language" class="tsd-kind-icon">content-<wbr>language</a>
+							</li>
+							<li class=" tsd-kind-property tsd-parent-kind-interface tsd-is-external">
+								<a href="_file_.fileinfo.html#src_last_modified_millis" class="tsd-kind-icon">src_<wbr>last_<wbr>modified_<wbr>millis</a>
+							</li>
+						</ul>
+					</li>
+				</ul>
+				<ul class="after-current">
+					<li class=" tsd-kind-interface tsd-parent-kind-module tsd-is-external">
+						<a href="_file_.fileuploadoptions.html" class="tsd-kind-icon">File<wbr>Upload<wbr>Options</a>
+					</li>
+				</ul>
+			</nav>
+		</div>
+	</div>
+</div>
+<footer class="with-border-bottom">
+	<div class="container">
+		<h2>Legend</h2>
+		<div class="tsd-legend-group">
+			<ul class="tsd-legend">
+				<li class="tsd-kind-class"><span class="tsd-kind-icon">Class</span></li>
+			</ul>
+		</div>
+	</div>
+</footer>
+<div class="container tsd-generator">
+	<p>Generated using <a href="https://typedoc.org/" target="_blank">TypeDoc</a></p>
+</div>
+<div class="overlay"></div>
+<script src="../assets/js/main.js"></script>
+<script>if (location.protocol == 'file:') document.write('<script src="../assets/js/search.js"><' + '/script>');</script>
+</body>
+</html>
