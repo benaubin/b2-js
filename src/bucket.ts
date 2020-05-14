@@ -2,7 +2,6 @@ import B2 from "./b2";
 import File, { FileUploadOptions, FileData } from "./file";
 import SinglePartUpload from "./single-part-upload";
 import { BackblazeLibraryError } from "./errors";
-import uploadPart from "./api-operations/upload-part";
 
 export enum BucketType {
   allPublic = "allPublic",
@@ -150,7 +149,7 @@ export default class Bucket {
 
     if (
       typeof contentLength !== "undefined" &&
-      contentLength <= this.b2.recommendedPartSize
+      contentLength <= this.b2.partSize
     ) {
       const fileData = await this.uploadSinglePart(fileName, data, {
         ...options,

@@ -34,10 +34,7 @@ class PendingPart extends Writable {
 }
 
 export default class FileUploadStream extends Writable {
-  get partSize(): number {
-    return this.b2["auth"].absoluteMinimumPartSize;
-    return this.b2["auth"].recommendedPartSize;
-  }
+  static maximumPartSize?: number
 
   readonly file: File;
   readonly b2: B2;
@@ -60,7 +57,7 @@ export default class FileUploadStream extends Writable {
   }
 
   __process(chunk: Buffer, callback: (error?: Error | null) => void) {
-    const spaceInPart = this.partSize - this.pendingPart.bytes;
+    const spaceInPart = this.b2.partSize - this.pendingPart.bytes;
 
     if (chunk.byteLength > spaceInPart) {
       const part = this.pendingPart;

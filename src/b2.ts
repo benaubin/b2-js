@@ -17,8 +17,15 @@ export default class B2 {
 
   private auth!: AuthorizeAccountSuccessResponse;
 
-  get recommendedPartSize() {
-    return this.auth.recommendedPartSize;
+  private _userSetPartSize?: number;
+
+  get partSize() {
+    return typeof this._userSetPartSize !== "undefined"
+      ? Math.max(this._userSetPartSize, this.auth.absoluteMinimumPartSize)
+      : this.auth.recommendedPartSize;
+  }
+  set partSize(size: number) {
+    this._userSetPartSize = size;
   }
 
   static readonly apiVersion: string = "v2";

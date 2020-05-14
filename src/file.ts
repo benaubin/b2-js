@@ -1,7 +1,6 @@
 import Bucket from "./bucket";
 import FileUploadStream from "./file-upload-stream";
 import { BackblazeLibraryError } from "./errors";
-import SinglePartUpload from "./single-part-upload";
 
 /**
  * Where sensible, Backblaze recommends these values to allow different B2 clients
