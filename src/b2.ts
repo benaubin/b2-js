@@ -19,6 +19,16 @@ export default class B2 {
 
   private _userSetPartSize?: number;
 
+  /**
+   * Backblaze allows uploading files as a single-part or as multiple parts.
+   * However, you must know the length of each file in advance, and you cannot
+   * use chunked-encoding. Single-part uploads are generally faster for smaller files.
+   * Backblaze recommends a part-size, which is automatically used.
+   * 
+   * Each part must be read into memory. 
+   * 
+   * You can configure this, to a minimum of `b2.auth.absoluteMinimumPartSize`.
+  */
   get partSize() {
     return typeof this._userSetPartSize !== "undefined"
       ? Math.max(this._userSetPartSize, this.auth.absoluteMinimumPartSize)
@@ -133,6 +143,7 @@ export default class B2 {
     return this.request(url, request, opts);
   }
 
+  /** @internal */
   async callDownloadApi(
     operationName: string,
     request: RequestInit,
@@ -147,6 +158,7 @@ export default class B2 {
     return this.request(url, request, opts);
   }
 
+  /** @internal */
   async requestFromDownloadFileByName(
     bucketName: string,
     fileName: string,
@@ -157,8 +169,24 @@ export default class B2 {
     return this.request(url, request, opts);
   }
 
+  /** 
+   * Get a bucket by name.
+   * 
+   * ```js
+   * const bucket = await b2.bucket("js-testing-bucket");
+   * ```
+   */
   bucket(name: string): Promise<Bucket>;
+
+  /**
+   * Get a bucket by id.
+   * 
+   * ```js
+   * const bucket = await b2.bucket({bucketId: "BUCKET_ID"});
+   * ```
+   */
   bucket(info: MinimumBucketInfo): Promise<Bucket>;
+
   async bucket(info: string | MinimumBucketInfo): Promise<Bucket> {
     return new Bucket(
       this,

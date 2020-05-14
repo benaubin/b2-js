@@ -1,6 +1,7 @@
 import Bucket from "./bucket";
 import FileUploadStream from "./file-upload-stream";
-import { BackblazeLibraryError } from "./errors";
+import BackblazeServerError, { BackblazeLibraryError } from "./errors";
+import { PassThrough } from 'stream';
 
 /**
  * Where sensible, Backblaze recommends these values to allow different B2 clients
@@ -191,7 +192,7 @@ export interface FileUploadOptions {
   backoff?: number;
 }
 
-type MinimumFileData = Partial<FileData> & ({fileName: string});
+type MinimumFileData = Partial<FileData> & { fileName: string };
 
 export default class File {
   private _bucket: Bucket;
@@ -203,36 +204,141 @@ export default class File {
   }
 
   async getFileName() {
-    let {fileName} = this._fileData;
-    if(typeof fileName !== "undefined") return fileName;
+    let { fileName } = this._fileData;
+    if (typeof fileName !== "undefined") return fileName;
 
-    throw new BackblazeLibraryError.Internal("Finding a file's name by id is not supported yet.")
+    return (await this.stat()).fileName;
   }
 
+  /**
+   * When getting a file's ids by its `fileName`, this is a Class C transaction
+   * See https://www.backblaze.com/b2/cloud-storage-pricing.html
+   */
   async getFileId() {
-    let {fileId} = this._fileData;
-    if(typeof fileId !== "undefined") return fileId;
+    let { fileId } = this._fileData;
+    if (typeof fileId !== "undefined" && fileId !== null) return fileId;
 
-    throw new BackblazeLibraryError.Internal("Finding a file's id by name is not supported yet.")
+    return (await this.stat()).fileId;
   }
 
-  async getBucketId() {
+  getBucketId() {
     return this._bucket.getBucketId();
+  }
+
+  getBucketName() {
+    return this._bucket.getBucketName();
   }
 
   get b2() {
     return this._bucket.b2;
   }
 
-  createWriteStream(): FileUploadStream {
-    return new FileUploadStream(this)
+  /**
+   * Gets file data by fileId or fileName.
+   * 
+   * When stating a file without its `fileId`, this is a Class C transaction
+   * See https://www.backblaze.com/b2/cloud-storage-pricing.html
+   * 
+   * @throws {@linkcode BackblazeLibraryError.FileNotFound} When a file is not found by name.
+   */
+  async stat(): Promise<FileData> {
+    const { fileId, fileName } = this._fileData;
+
+    if (typeof fileId !== "undefined" && fileId != null) {
+      const res = await this.b2.callApi("b2_get_file_info", {
+        method: "POST",
+        body: JSON.stringify({
+          fileId: await this.getFileId()
+        })
+      });
+
+      return this._fileData = await res.json();
+    } else if (typeof fileName !== "undefined") {
+      const {files: [fileData]} = await this._bucket._getFileDataBatch({ batchSize: 1, startFileName: fileName });
+      if(typeof fileData === "undefined" || fileData.fileName !== fileName) 
+        throw new BackblazeLibraryError.FileNotFound("The file was not found.");
+      
+      return this._fileData = fileData;
+    } else {
+      throw new BackblazeLibraryError.BadUsage("To stat a file, you must provide either its fileId or fileName.")
+    }
   }
-  
+
+  /**
+   * Download this file from B2.
+   * 
+   * ```js
+   * const file = bucket.file("text.txt");
+   * file.createReadStream();
+    ```
+   */
+  createReadStream(): NodeJS.ReadableStream {
+    const stream = new PassThrough();
+
+    const { fileId, fileName } = this._fileData;
+
+    if (typeof fileId !== "undefined" && fileId != null) {
+      this.b2.callDownloadApi(
+        "b2_download_file_by_id?fileId=" + encodeURIComponent(fileId),
+        {}
+      ).then((res) => {
+        res.body.on("error", stream.destroy)
+        res.body.pipe(stream);
+      });
+    } else if (typeof fileName !== "undefined") {
+      Promise.all([this.getBucketName()]).then(([bucketName]) =>
+        this.b2.requestFromDownloadFileByName(
+          bucketName,
+          fileName,
+          {}
+        )
+      ).then((res) => {
+        res.body.on("error", stream.destroy)
+        res.body.pipe(stream);
+      });
+    } else {
+      throw new BackblazeLibraryError.BadUsage("To download a file, you must provide either its fileId or fileName.")
+    }
+
+    return stream;
+  }
+
+  /**
+   * Upload to this file on B2.
+   * 
+   * This works by loading chunks of the stream, upto {@linkcode B2.partSize},
+   * into memory. If the stream has less than or equal to that many bytes, a 
+   * single-part upload will be attempted.
+   * 
+   * Otherwise, a multi-part upload will be attempted by loading up-to 
+   * `b2.partSize` bytes of the stream into memory at a time.
+   * 
+   * ```js
+   * const file = bucket.file("example");
+   * const stream = file.createWriteStream();
+   * stream.on("error", (err) => {
+   *   // handle the error 
+   *   // note that retries are automatically attempted before errors are 
+   *   // thrown for most potentially recoverable errors, as per the B2 docs.
+   * })
+   * stream.on("finish", (err) => {
+   *   // upload done, the file instance has been updated to reflect this
+   * })
+   * res.body.pipe(stream);
+   * ```
+   */
+  createWriteStream(): FileUploadStream {
+    return new FileUploadStream(this);
+  }
+
   /** @protected */
   async _startMultipartUpload(options: FileUploadOptions): Promise<void> {
-    if(this._fileData.action === FileAction.upload) return;
+    if (this._fileData.action === FileAction.upload) return;
 
-    const [bucketId, fileName] = await Promise.all([this.getBucketId(), this.getFileName()])
+    const [bucketId, fileName] = await Promise.all([
+      this.getBucketId(),
+      this.getFileName(),
+    ]);
 
     const res = await this.b2.callApi("b2_start_large_file", {
       method: "POST",
@@ -243,13 +349,19 @@ export default class File {
         fileInfo: options.fileInfo,
       }),
     });
-    
+
     this._fileData = await res.json();
   }
 
   /** @protected */
-  async uploadSinglePart(data: Buffer | NodeJS.ReadableStream, options: FileUploadOptions & {contentLength: number}) {
-    return this._bucket.uploadSinglePart(await this.getFileName(), data, options)
+  async uploadSinglePart(
+    data: Buffer | NodeJS.ReadableStream,
+    options: FileUploadOptions & { contentLength: number }
+  ) {
+    return this._bucket.uploadSinglePart(
+      await this.getFileName(),
+      data,
+      options
+    );
   }
-
 }

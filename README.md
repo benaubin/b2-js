@@ -19,12 +19,14 @@
 
 > A powerful library for using Backblaze B2.
 
-<img src="https://app.mintere.com/assets/logo-no-space-cae371bbf448f4dcc2596ff65617601dea1da09e35fd5a217039642a93752517.png" width="100"/>
+<a href="https://mintere.com">
+  <img src="https://app.mintere.com/assets/logo-no-space-cae371bbf448f4dcc2596ff65617601dea1da09e35fd5a217039642a93752517.png" width="100"/>
+</a>
 
 Developed for <a href="https://mintere.site">Mintere Sites</a>, a platform enabling 
 websites to be global, easy-to-develop, performant and dynamic.
 
-### 🏠 [Homepage](https://github.com/benaubin/b2-js#readme)
+Requires ES2018
 
 ## Install
 
@@ -39,7 +41,8 @@ yarn install
   use chunked-encoding.
 - Single-part uploads are generally faster for smaller files. Backblaze recommends
   a part-size.
-- The library should handle the complexity of spliting streams into
+- The library should handle the complexity of working with the B2 API, including
+  handling splitting streams into multi-part uploads.
 
 ## Key Considerations
 
@@ -59,7 +62,7 @@ const bucket = b2.bucket("bucket-name");
 
 ### Uploading
 
-### Buffers
+#### Buffers
 
 When uploading Buffers, the library automatically decides whether to conduct a single or multi-part
 upload based on the Buffer's `byteLength`.
@@ -72,7 +75,7 @@ bucket.upload("test.txt", Buffer.from("foobar"));
 bucket.upload("test.txt", Buffer.from("*".repeat(101*1000*1000 /* 101MB */)));
 ```
 
-### Streams
+#### Streams
 
 When the `contentLength` is known, you may conduct a single part upload without
 loading the stream into memory.
@@ -107,6 +110,40 @@ stream.on("finish", (err) => {
 })
 
 res.body.pipe(stream);
+```
+
+
+### Downloading
+```js
+const file = bucket.file("text.txt");
+file.createReadStream();
+```
+
+### Stat
+
+#### By id
+
+```js
+const file = bucket.file({fileId: "...."});
+const fileData = await file.stat(); //=> see https://www.backblaze.com/b2/docs/b2_get_file_info.html
+```
+
+#### By name
+
+Note that statting a file by name involves a Class C transaction
+as it involves listing files with a call to `b2_list_file_names`.
+
+```js
+const file = bucket.file("text.txt");
+try {
+  const fileData = await file.stat(); //=> see https://www.backblaze.com/b2/docs/b2_get_file_info.html
+} catch (e) {
+  if (e instanceof BackblazeLibraryError.FileNotFound) {
+    // handle file not found.
+  } else {
+    throw e;  // re-throw the error unchanged
+  }
+}
 ```
 
 ## Author

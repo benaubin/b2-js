@@ -4,6 +4,8 @@ export namespace BackblazeLibraryError {
   export class BadUsage extends Error {}
 
   export class Internal extends Error {}
+
+  export class FileNotFound extends Error {}
 }
 
 class BackblazeServerError extends BackblazeLibraryError {
