@@ -19,6 +19,11 @@
 
 > A powerful library for using Backblaze B2.
 
+<img src="https://app.mintere.com/assets/logo-no-space-cae371bbf448f4dcc2596ff65617601dea1da09e35fd5a217039642a93752517.png" width="100"/>
+
+Developed for <a href="https://mintere.site">Mintere Sites</a>, a platform enabling 
+websites to be global, easy-to-develop, performant and dynamic.
+
 ### 🏠 [Homepage](https://github.com/benaubin/b2-js#readme)
 
 ## Install
@@ -27,6 +32,22 @@
 yarn install
 ```
 
+## Principles
+
+- Backblaze allows uploading files as a single-part or as multiple parts.
+  However, you must know the length of each file in advance, and you cannot
+  use chunked-encoding.
+- Single-part uploads are generally faster for smaller files. Backblaze recommends
+  a part-size.
+- The library should handle the complexity of spliting streams into
+
+## Key Considerations
+
+- For streams of unknown length, each part must be read into memory (up-to 100MB). 
+  You can configure this down to `b2.auth.absoluteMinimumPartSize` using `b2.partSize = BYTES`.
+- It's generally faster to use single part upload for smaller files. The library will make
+  the decision for you based on `b2.partSize`.
+
 ## Usage
 
 ```js
@@ -34,16 +55,58 @@ import B2 from "./src/b2";
 
 const b2 = await B2.authorize({ applicationKeyId: "KEY_ID", applicationKey: "SECRET_KEY"});
 const bucket = b2.bucket("bucket-name");
+```
 
-// Single-part upload (for content smaller than ~100MB)
-bucket.upload("test.txt", Buffer.from("foobar")) // Buffer content-length is automatically detected to determine which upload type to attempt.
+### Uploading
 
-const stream = require("fs").createReadStream("./README.md")
-bucket.upload("readme", stream, {contentLength: 2174}) // In order to conduct a single-part upload with a stream,
-                                                       // the content length of the stream in bytes must be known.
-                                                       // Otherwise, a multi-part upload will be attempted.
-                                                       // It is STRONGLY recommended to pass `contentLength` whenever possible
-                                                       // to minimize the number of requests which must be attempted.
+### Buffers
+
+When uploading Buffers, the library automatically decides whether to conduct a single or multi-part
+upload based on the Buffer's `byteLength`.
+
+```js
+// a single-part upload will be attempted.
+bucket.upload("test.txt", Buffer.from("foobar"));
+
+// a multi-part upload will automatically be attempted for larger files
+bucket.upload("test.txt", Buffer.from("*".repeat(101*1000*1000 /* 101MB */)));
+```
+
+### Streams
+
+When the `contentLength` is known, you may conduct a single part upload without
+loading the stream into memory.
+
+```js
+const fileStream = require("fs").createReadStream("./README.md")
+// In order to conduct a single-part upload without loading a stream
+// into memory, the content length of the stream in bytes must be known.
+bucket.uploadSinglePart("readme", fileStream, {contentLength: 2174}) 
+```
+
+When the `contentLength` is unknown, or a stream is too large for a single-part upload,
+each part of the stream must be loaded into memory in order to size the stream,
+compute a digest of the content and properly split the stream into parts. 
+
+If the stream less than or equal to `b2.partSize` bytes, a single-part upload will
+be attempted. Otherwise, a multi-part upload will be attempted by loading up-to 
+`b2.partSize` bytes of the stream into memory at a time.
+
+```js
+const file = bucket.file("example");
+const stream = file.createWriteStream();
+
+stream.on("error", (err) => {
+  // handle the error 
+  // note that retries are automatically attempted before errors are 
+  // thrown for most potentially recoverable errors, as per the B2 docs.
+})
+
+stream.on("finish", (err) => {
+  // upload done, the file instance has been updated to reflect this
+})
+
+res.body.pipe(stream);
 ```
 
 ## Author
@@ -67,3 +130,4 @@ Give a ⭐️ if this project helped you!
 
 Copyright © 2020 [Ben Aubin (benaubin.com)](https://github.com/benaubin).<br />
 This project is [MIT](https://github.com/benaubin/b2-js/blob/master/LICENSE) licensed.
+
