@@ -59,7 +59,7 @@ export default class B2 {
   }
 
   static uriDecodeString(encoded: string) {
-    return decodeURIComponent(encoded).replace(/+/g, " ");
+    return decodeURIComponent(encoded).replace(/\+/g, " ");
   }
 
   private async request(
