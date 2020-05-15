@@ -1,4 +1,4 @@
-# Backblaze B2 JavaScript Client
+<h1> <img src="https://www.backblaze.com/blog/wp-content/uploads/2017/12/backblaze_icon_transparent.png" alt="Backblaze logo" width="32"> Backblaze B2 JavaScript Client </h1>
 
 <p>
   <a href="https://www.npmjs.com/package/b2-js" target="_blank">
