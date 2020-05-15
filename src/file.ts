@@ -198,6 +198,7 @@ export default class File {
   private _bucket: Bucket;
   private _fileData: MinimumFileData;
 
+  /** @internal */
   constructor(bucket: Bucket, fileData: MinimumFileData) {
     this._bucket = bucket;
     this._fileData = fileData;
@@ -229,6 +230,7 @@ export default class File {
     return this._bucket.getBucketName();
   }
 
+  /** @internal */
   get b2() {
     return this._bucket.b2;
   }
@@ -331,7 +333,7 @@ export default class File {
     return new FileUploadStream(this);
   }
 
-  /** @protected */
+  /** @internal */
   async _startMultipartUpload(options: FileUploadOptions): Promise<void> {
     if (this._fileData.action === FileAction.upload) return;
 
@@ -353,7 +355,7 @@ export default class File {
     this._fileData = await res.json();
   }
 
-  /** @protected */
+  /** @internal */
   async uploadSinglePart(
     data: Buffer | NodeJS.ReadableStream,
     options: FileUploadOptions & { contentLength: number }
