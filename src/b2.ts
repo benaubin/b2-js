@@ -7,6 +7,8 @@ import {
 import BackblazeServerError, { BackblazeErrorResponse } from "./errors";
 import Bucket, { MinimumBucketInfo } from "./bucket";
 
+const { version } = require("../package.json") as { version: string };
+
 interface RequestOptions {
   maxRetries?: number;
   backoff?: number;
@@ -24,11 +26,11 @@ export default class B2 {
    * However, you must know the length of each file in advance, and you cannot
    * use chunked-encoding. Single-part uploads are generally faster for smaller files.
    * Backblaze recommends a part-size, which is automatically used.
-   * 
-   * Each part must be read into memory. 
-   * 
+   *
+   * Each part must be read into memory.
+   *
    * You can configure this, to a minimum of `b2.auth.absoluteMinimumPartSize`.
-  */
+   */
   get partSize() {
     return typeof this._userSetPartSize !== "undefined"
       ? Math.max(this._userSetPartSize, this.auth.absoluteMinimumPartSize)
@@ -39,6 +41,7 @@ export default class B2 {
   }
 
   static readonly apiVersion: string = "v2";
+  static readonly userAgent: string = `b2-js/${version}+nodejs/${process.version} https://git.io/b2-js`;
 
   private constructor(credentials: B2Credentials) {
     this.credentials = credentials;
@@ -50,10 +53,10 @@ export default class B2 {
 
   /**
    * Create a new B2 client by authorizing with the API.
-   * 
+   *
    * ```js
    * import B2 from "./src/b2";
-   * 
+   *
    * const b2 = await B2.authorize({
    *   applicationKeyId: "KEY_ID",
    *   applicationKey: "SECRET_KEY"
@@ -90,6 +93,7 @@ export default class B2 {
       headers: {
         ...request.headers,
         Authorization: this.auth.authorizationToken,
+        "User-Agent": B2.userAgent,
       },
     });
 
@@ -184,9 +188,9 @@ export default class B2 {
     return this.request(url, request, opts);
   }
 
-  /** 
+  /**
    * Get a bucket by name.
-   * 
+   *
    * ```js
    * const bucket = await b2.bucket("js-testing-bucket");
    * ```
@@ -195,7 +199,7 @@ export default class B2 {
 
   /**
    * Get a bucket by id.
-   * 
+   *
    * ```js
    * const bucket = await b2.bucket({bucketId: "BUCKET_ID"});
    * ```

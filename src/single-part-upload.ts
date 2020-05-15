@@ -77,6 +77,7 @@ export default class SinglePartUpload {
       "Content-Type": contentType,
       "Content-Length": contentLength.toString(),
       "X-Bz-Content-Sha1": sha1,
+      "User-Agent": B2.userAgent,
     }
 
     if(typeof fileInfo !== "undefined") {

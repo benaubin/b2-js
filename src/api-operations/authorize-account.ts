@@ -72,7 +72,8 @@ export async function authorize({applicationKeyId, applicationKey}: B2Credential
 
   const res = await fetch(`https://api.backblazeb2.com/b2api/${B2.apiVersion}/b2_authorize_account`, {
     headers: {
-      "Authorization": `Basic ${combinedCredentials}`
+      "Authorization": `Basic ${combinedCredentials}`,
+      "User-Agent": B2.userAgent,
     }
   });
 

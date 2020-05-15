@@ -1,7 +1,7 @@
-import Bucket from "./bucket";
-import FileUploadStream from "./file-upload-stream";
-import BackblazeServerError, { BackblazeLibraryError } from "./errors";
 import { PassThrough } from 'stream';
+import Bucket from "./bucket";
+import { BackblazeLibraryError } from "./errors";
+import FileUploadStream from "./file-upload-stream";
 
 /**
  * Where sensible, Backblaze recommends these values to allow different B2 clients

@@ -1,5 +1,6 @@
 import BackblazeServerError from "../errors";
 import fetch from "node-fetch";
+import B2 from '../b2';
 
 /** @internal */
 export interface PartUploadResultData {
@@ -45,6 +46,7 @@ export default async function uploadPart(
       "X-Bz-Content-Sha1": sha1,
       "X-Bz-Part-Number": partNumber.toString(),
       "Content-Length": buffer.byteLength.toString(),
+      "User-Agent": B2.userAgent,
     },
     body: buffer,
   });
