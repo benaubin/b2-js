@@ -1,4 +1,4 @@
-<h1 align="center">Welcome to b2-js 👋</h1>
+<h1 align="center">Backblaze B2 - JavaScript Client</h1>
 <p>
   <a href="https://www.npmjs.com/package/b2-js" target="_blank">
     <img alt="Version" src="https://img.shields.io/npm/v/b2-js.svg">
