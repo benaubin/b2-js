@@ -1,6 +1,7 @@
 import BackblazeServerError from "../errors";
 import fetch from "node-fetch";
 
+/** @internal */
 export interface PartUploadResultData {
   fileId: string;
   partNumber: string;
@@ -10,17 +11,20 @@ export interface PartUploadResultData {
   uploadTimestamp: string;
 }
 
+/** @internal */
 export interface MultipartUploadUrl {
   fileId: string;
   uploadUrl: string;
   authorizationToken: string;
 }
 
+/** @internal */
 export interface PartUploadResult {
   data: PartUploadResultData
   url: MultipartUploadUrl
 }
 
+/** @internal */
 export default async function uploadPart(
   partNumber: number,
   buffer: ArrayBuffer,

@@ -64,6 +64,7 @@ export interface B2Credentials {
   applicationKey: string
 }
 
+/** @internal */
 export async function authorize({applicationKeyId, applicationKey}: B2Credentials) {
   const combinedCredentials = Buffer.from(
     applicationKeyId + ":" + applicationKey

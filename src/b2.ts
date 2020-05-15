@@ -48,16 +48,30 @@ export default class B2 {
     this.auth = await authorize(this.credentials);
   }
 
+  /**
+   * Create a new B2 client by authorizing with the API.
+   * 
+   * ```js
+   * import B2 from "./src/b2";
+   * 
+   * const b2 = await B2.authorize({
+   *   applicationKeyId: "KEY_ID",
+   *   applicationKey: "SECRET_KEY"
+   * });
+   * ```
+   */
   static async authorize(credentials: B2Credentials): Promise<B2> {
     const b2 = new B2(credentials);
     await b2.authorize();
     return b2;
   }
 
+  /** @internal */
   static uriEncodeString(decoded: string) {
     return encodeURIComponent(decoded).replace(/%2F/g, "/");
   }
 
+  /** @internal */
   static uriDecodeString(encoded: string) {
     return decodeURIComponent(encoded).replace(/\+/g, " ");
   }
@@ -132,6 +146,7 @@ export default class B2 {
     }
   }
 
+  /** Call a b2 operation by name */
   async callApi(
     operationName: string,
     request: RequestInit,

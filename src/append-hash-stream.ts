@@ -1,6 +1,11 @@
 import { Transform, TransformCallback } from "stream";
 import { createHash, Hash } from "crypto";
 
+/** 
+ * Passes through its contents and ammends a hex-encoded hash of the data upon "end".
+ * 
+ * @internal 
+ */
 export default class AppendHashStream extends Transform {
   hash: Hash
 

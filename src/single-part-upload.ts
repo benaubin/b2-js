@@ -11,6 +11,7 @@ interface SinglePartUploadUrlInfo {
   authorizationToken: string;
 }
 
+/** @internal */
 export default class SinglePartUpload {
   private bucket: Bucket;
 
@@ -26,6 +27,7 @@ export default class SinglePartUpload {
     this.info = info;
   }
 
+  /** Create a new single part uploader by requesting a new upload url from B2. */
   static async requestNew(bucket: Bucket): Promise<SinglePartUpload> {
     const res = await bucket.b2.callApi("b2_get_upload_url", {
       method: "POST",
@@ -39,6 +41,7 @@ export default class SinglePartUpload {
     return new SinglePartUpload(bucket, info);
   }
 
+  /** @private */
   private async _upload(
     fileName: string,
     data: NodeJS.ReadableStream | Buffer,
@@ -139,7 +142,6 @@ export default class SinglePartUpload {
   }
 
   /**
-   * @private
    * @returns `false` when this single part upload is no longer valid.
    */
   upload(
@@ -147,8 +149,8 @@ export default class SinglePartUpload {
     stream: NodeJS.ReadableStream | Buffer,
     opts: FileUploadOptions & { contentLength: number }
   ): Promise<FileData | false>;
+
   /**
-   * @private
    * @returns `false` when this single part upload is no longer valid.
    */
   upload(

@@ -33,6 +33,8 @@ class PendingPart extends Writable {
   }
 }
 
+
+/** @internal */
 export default class FileUploadStream extends Writable {
   static maximumPartSize?: number
 
