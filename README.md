@@ -1,4 +1,5 @@
-<h1 align="center">Backblaze B2 - JavaScript Client</h1>
+# The Community-Supported Backblaze B2 JavaScript Client
+
 <p>
   <a href="https://www.npmjs.com/package/b2-js" target="_blank">
     <img alt="Version" src="https://img.shields.io/npm/v/b2-js.svg">
