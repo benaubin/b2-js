@@ -1,4 +1,4 @@
-# The Community-Supported Backblaze B2 JavaScript Client
+# Backblaze B2 JavaScript Client
 
 <p>
   <a href="https://www.npmjs.com/package/b2-js" target="_blank">
