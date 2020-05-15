@@ -243,27 +243,33 @@ export default class File {
    * 
    * @throws {@linkcode BackblazeLibraryError.FileNotFound} When a file is not found by name.
    */
-  async stat(): Promise<FileData> {
-    const { fileId, fileName } = this._fileData;
-
-    if (typeof fileId !== "undefined" && fileId != null) {
-      const res = await this.b2.callApi("b2_get_file_info", {
-        method: "POST",
-        body: JSON.stringify({
-          fileId: await this.getFileId()
-        })
-      });
-
-      return this._fileData = await res.json();
-    } else if (typeof fileName !== "undefined") {
-      const {files: [fileData]} = await this._bucket._getFileDataBatch({ batchSize: 1, startFileName: fileName });
-      if(typeof fileData === "undefined" || fileData.fileName !== fileName) 
-        throw new BackblazeLibraryError.FileNotFound("The file was not found.");
-      
-      return this._fileData = fileData;
+  stat(): Promise<FileData> {
+    if (typeof this._fileData.fileId !== "undefined" && this._fileData.fileId != null) {
+      return this._statById();
+    } else if (typeof this._fileData.fileName !== "undefined") {
+      return this._statByName();
     } else {
       throw new BackblazeLibraryError.BadUsage("To stat a file, you must provide either its fileId or fileName.")
     }
+  }
+
+  private async _statById(): Promise<FileData> {
+    const res = await this.b2.callApi("b2_get_file_info", {
+      method: "POST",
+      body: JSON.stringify({
+        fileId: await this.getFileId()
+      })
+    });
+
+    return this._fileData = await res.json();
+  }
+
+  private async _statByName(): Promise<FileData> {
+    const {files: [fileData]} = await this._bucket._getFileDataBatch({ batchSize: 1, startFileName: this._fileData.fileName! });
+    if(typeof fileData === "undefined" || fileData.fileName !== this._fileData.fileName!) 
+      throw new BackblazeLibraryError.FileNotFound("The file was not found.");
+    
+    return this._fileData = fileData;
   }
 
   /**
