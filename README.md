@@ -12,6 +12,9 @@
   <a href="https://github.com/benaubin/b2-js/blob/master/LICENSE" target="_blank">
     <img alt="License: MIT" src="https://img.shields.io/github/license/benaubin/b2-js" />
   </a>
+  <a href="https://codeclimate.com/github/benaubin/b2-js/maintainability">
+    <img src="https://api.codeclimate.com/v1/badges/1124a063a4644aae3d3e/maintainability" />
+  </a>
   <a href="https://twitter.com/BenAubin_" target="_blank">
     <img alt="Twitter: BenAubin_" src="https://img.shields.io/twitter/follow/BenAubin_.svg?style=social" />
   </a>
