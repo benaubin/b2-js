@@ -88,14 +88,28 @@ export default class B2 {
     const options = { maxRetries: 5, backoff: 150, ..._options };
     const { maxRetries, backoff } = options;
 
-    const res = await fetch(url, {
-      ...request,
-      headers: {
-        ...request.headers,
-        Authorization: this.auth.authorizationToken,
-        "User-Agent": B2.userAgent,
-      },
-    });
+    let res: Response;
+    try {
+      res = await fetch(url, {
+        ...request,
+        headers: {
+          ...request.headers,
+          Authorization: this.auth.authorizationToken,
+          "User-Agent": B2.userAgent,
+        },
+      });
+    } catch {
+      return new Promise((res, rej) => {
+        setTimeout(() => {
+          this.request(
+            url,
+            request,
+            { ...options, backoff: backoff * 2 },
+            retries + 1
+          ).then(res, rej);
+        }, backoff * (0.5 + Math.random()));
+      });
+    }
 
     if (res.status === 200) {
       return res;
@@ -122,27 +136,30 @@ export default class B2 {
               throw new BackblazeServerError.BadRequest(data);
             case 403:
               throw new BackblazeServerError.Forbidden(data);
-            case 408:
-              throw new BackblazeServerError.RequestTimeout(data);
             case 416:
               throw new BackblazeServerError.RangeNotSatisfiable(data);
             case 500:
               throw new BackblazeServerError.InternalServerError(data);
+            case 408:
+              if (retries >= maxRetries)
+                throw new BackblazeServerError.RequestTimeout(data);
+            case 500:
+              if (retries >= maxRetries)
+                throw new BackblazeServerError.InternalServerError(data);
             case 503:
-              if (retries < maxRetries) {
-                return new Promise((res, rej) => {
-                  setTimeout(() => {
-                    this.request(
-                      url,
-                      request,
-                      { ...options, backoff: backoff * 2 },
-                      retries + 1
-                    ).then(res, rej);
-                  }, backoff * (0.5 + Math.random()));
-                });
-              } else {
+              if (retries >= maxRetries)
                 throw new BackblazeServerError.ServiceUnavailable(data);
-              }
+
+              return new Promise((res, rej) => {
+                setTimeout(() => {
+                  this.request(
+                    url,
+                    request,
+                    { ...options, backoff: backoff * 2 },
+                    retries + 1
+                  ).then(res, rej);
+                }, backoff * (0.5 + Math.random()));
+              });
             default:
               throw new BackblazeServerError.UnknownServerError(data);
           }
