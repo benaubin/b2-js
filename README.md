@@ -17,7 +17,17 @@
   </a>
 </p>
 
-> A powerful library for using Backblaze B2.
+A powerful library for using Backblaze B2.
+
+✅ Streaming uploads (automatic switching between single and multi-part)<br/>
+✅ Single-part uploads<br/>
+✅ Streaming downloads<br/>
+✅ Graceful error handling (exponential back-off)<br/>
+✅ Requires ES2018<br/>
+🚫 Browser Not Supported (uses `node-fetch` and `streams`)
+
+### 📜 [Documentation](hhttps://benaubin.github.io/b2-js/)
+
 
 <a href="https://mintere.com">
   <img src="https://app.mintere.com/assets/logo-no-space-cae371bbf448f4dcc2596ff65617601dea1da09e35fd5a217039642a93752517.png" width="100"/>
@@ -25,8 +35,6 @@
 
 Developed for <a href="https://mintere.site">Mintere Sites</a>, a platform enabling 
 websites to be global, easy-to-develop, performant and dynamic.
-
-Requires ES2018
 
 ## Install
 

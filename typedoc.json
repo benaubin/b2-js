@@ -2,15 +2,6 @@
   "inputFiles": ["./src"],
   "mode": "modules",
   "out": "docs",
-  "outline": [{
-    "modules": {
-      "b2 (default)": "_b2_"
-    }
-  }],
-  "source": [{
-    "path": "https://github.com/mintere/mintere-app/blob/master/src/",
-    "line": "L"
-  }],
   "excludePrivate": true,
   "excludeNotExported": true,
   "stripInternal": true

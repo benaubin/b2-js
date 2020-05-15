@@ -25,7 +25,7 @@
   "bugs": {
     "url": "https://github.com/benaubin/b2-js/issues"
   },
-  "homepage": "https://github.com/benaubin/b2-js#readme",
+  "homepage": "https://benaubin.github.io/b2-js/",
   "dependencies": {
     "node-fetch": "^2.6.0",
     "tslib": "^2.0.0"
