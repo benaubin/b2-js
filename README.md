@@ -42,7 +42,11 @@ websites to be global, easy-to-develop, performant and dynamic.
 ## Install
 
 ```sh
-yarn install
+npm install b2-js
+```
+
+```
+yarn install b2-js
 ```
 
 ## Principles
