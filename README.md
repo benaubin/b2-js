@@ -27,6 +27,7 @@ A powerful library for using Backblaze B2.
 ✅ Streaming downloads<br/>
 ✅ Graceful error handling (exponential back-off)<br/>
 ✅ Requires ES2018<br/>
+✅ Used in production at [Mintere](https://mintere.com)<br/>
 🚫 Browser Not Supported (uses `node-fetch` and `streams`)
 
 ### 📜 [Documentation](https://b2-js.netlify.app/)
@@ -173,6 +174,12 @@ try {
 ## 🤝 Contributing
 
 Contributions, issues and feature requests are welcome!<br />Feel free to check [issues page](https://github.com/benaubin/b2-js/issues). You can also take a look at the [contributing guide](https://github.com/benaubin/b2-js/blob/master/CONTRIBUTING.md).
+
+## Users
+
+- [Mintere](https://mintere.com) uses `b2-js` to serve static assets for its CDN and to deploy files on servers around the world.
+
+Using `b2-js` in production? Submit a PR to add yourself to this list!
 
 ## Show your support
 
