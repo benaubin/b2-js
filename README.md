@@ -26,7 +26,7 @@ A powerful library for using Backblaze B2.
 ✅ Requires ES2018<br/>
 🚫 Browser Not Supported (uses `node-fetch` and `streams`)
 
-### 📜 [Documentation](hhttps://benaubin.github.io/b2-js/)
+### 📜 [Documentation](https://benaubin.github.io/b2-js/)
 
 
 <a href="https://mintere.com">
