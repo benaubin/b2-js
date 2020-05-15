@@ -1,6 +1,6 @@
 {
   "name": "b2-js",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "A powerful library for using Backblaze B2.",
   "main": "dist/b2.js",
   "scripts": {
